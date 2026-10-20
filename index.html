@@ -3,43 +3,100 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Game demos</title>
+	<title>Game Demos</title>
+	<meta name="description" content="Playable browser builds of games in progress.">
 	<style>
+		:root {
+			--bg: #f4f2ee;
+			--card: #ffffff;
+			--text: #1d1c1a;
+			--muted: #67635c;
+			--line: #e2ded6;
+			--tag: #ece8e0;
+			--accent: #d9541e;
+			--shadow: 0 1px 2px rgba(0, 0, 0, 0.05), 0 8px 24px rgba(0, 0, 0, 0.06);
+		}
+		@media (prefers-color-scheme: dark) {
+			:root:not([data-theme="light"]) {
+				--bg: #121212;
+				--card: #1c1c1c;
+				--text: #ecebe8;
+				--muted: #a29e96;
+				--line: #2e2d2b;
+				--tag: #282725;
+				--accent: #ff7a45;
+				--shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.3);
+			}
+		}
+		* { box-sizing: border-box; }
 		body {
 			margin: 0;
-			min-height: 100vh;
+			background: var(--bg);
+			color: var(--text);
+			font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
+		}
+		main { max-width: 1120px; margin: 0 auto; padding: 56px 16px 72px; }
+		header { margin-bottom: 36px; }
+		h1 { margin: 0 0 6px; font-size: 32px; letter-spacing: -0.01em; }
+		header p { margin: 0; color: var(--muted); }
+		.games { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+		.game {
 			display: flex;
 			flex-direction: column;
-			align-items: center;
-			justify-content: center;
-			gap: 24px;
-			background: #000;
-			color: #d8e6ff;
-			font-family: system-ui, sans-serif;
-		}
-		h1 { font-weight: 500; letter-spacing: 0.08em; font-size: 20px; color: #8fa6c8; }
-		nav { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
-		a {
-			display: block;
-			width: 240px;
-			padding: 20px 22px;
-			border: 1px solid rgba(110, 170, 255, 0.35);
-			border-radius: 8px;
-			background: rgba(20, 40, 80, 0.25);
+			background: var(--card);
+			border: 1px solid var(--line);
+			border-radius: 12px;
+			overflow: hidden;
+			box-shadow: var(--shadow);
 			color: inherit;
 			text-decoration: none;
+			transition: transform 0.15s ease, border-color 0.15s ease;
 		}
-		a:hover { border-color: rgba(110, 170, 255, 0.9); background: rgba(20, 40, 80, 0.5); }
-		a strong { display: block; font-size: 20px; margin-bottom: 6px; }
-		a span { color: #8fa6c8; font-size: 14px; }
+		.game:hover, .game:focus-visible { transform: translateY(-3px); border-color: var(--accent); outline: none; }
+		.game img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; background: #000; }
+		.body { display: flex; flex-direction: column; gap: 10px; padding: 18px 20px 20px; flex: 1; }
+		h2 { margin: 0; font-size: 21px; }
+		h2 small { font-size: 14px; font-weight: 400; color: var(--muted); }
+		.body p { margin: 0; color: var(--muted); font-size: 15px; }
+		.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 6px; }
+		.tags span { background: var(--tag); border-radius: 999px; padding: 2px 10px; font-size: 13px; color: var(--muted); }
+		.tags .play { margin-left: auto; background: none; padding-right: 0; font-weight: 600; color: var(--accent); }
+		footer { margin-top: 40px; color: var(--muted); font-size: 14px; }
 	</style>
 </head>
 <body>
-	<h1>GAME DEMOS</h1>
-	<nav>
-		<a href="rtl/"><strong>Real-time logistics</strong><span>RTS logistics prototype</span></a>
-		<a href="skiff/"><strong>Skiff</strong><span>One ship, a few bots, a flaring star</span></a>
-		<a href="sloprunner/"><strong>Sloprunner</strong><span>Rooftop parkour racing with slap fights</span></a>
-	</nav>
+	<main>
+		<header>
+			<h1>Game Demos</h1>
+			<p>Prototypes in progress, built in Godot and playable right here in the browser.</p>
+		</header>
+		<div class="games">
+			<a class="game" href="sloprunner/">
+				<img src="img/sloprunner.webp" alt="First-person view running across a sunset city rooftop toward a checkpoint" width="800" height="450">
+				<div class="body">
+					<h2>Sloprunner</h2>
+					<p>First-person parkour racing across generated rooftops. Wallrun, slide, vault and grapple, chain moves to build speed, draft new abilities between races, and slap whoever's in your way. Online with friends or against bots.</p>
+					<div class="tags"><span>3D</span><span>Racing</span><span>Multiplayer</span><span class="play">Play →</span></div>
+				</div>
+			</a>
+			<a class="game" href="skiff/">
+				<img src="img/skiff.webp" alt="A small ship near a rocky planet, with a flaring star to the right" width="800" height="450">
+				<div class="body">
+					<h2>Skiff</h2>
+					<p>One ship, a handful of bots and a star that keeps flaring. Fly by hand, mark rock for your bots to dig, craft parts and modules from what they haul, and duck into a planet's shadow before the next flare hits.</p>
+					<div class="tags"><span>2D</span><span>Survival</span><span>Crafting</span><span class="play">Play →</span></div>
+				</div>
+			</a>
+			<a class="game" href="rtl/">
+				<img src="img/rtl.webp" alt="A glowing network of mining sites and lanes around a central hub" width="800" height="450">
+				<div class="body">
+					<h2>fork() <small>real-time logistics</small></h2>
+					<p>You're a self-replicating probe. Mine a star system, route ore along lanes into a growing base, and build the replicant that carries your lineage to the next system. Three systems per run, against the clock.</p>
+					<div class="tags"><span>2D</span><span>Strategy</span><span>Logistics</span><span class="play">Play →</span></div>
+				</div>
+			</a>
+		</div>
+		<footer>Builds update as the games change, so expect rough edges.</footer>
+	</main>
 </body>
 </html>
