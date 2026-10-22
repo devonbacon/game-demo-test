@@ -3,6 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+		<meta name="theme-color" content="#000000">
 		<title>Skiff</title>
 		<style>
 html, body, #canvas {
@@ -13,7 +14,7 @@ html, body, #canvas {
 
 body {
 	color: white;
-	background-color: black;
+	background-color: #000000;
 	overflow: hidden;
 	touch-action: none;
 }
@@ -26,69 +27,161 @@ body {
 	outline: none;
 }
 
-#status, #status-splash, #status-progress {
-	position: absolute;
-	left: 0;
-	right: 0;
-}
-
-#status, #status-splash {
-	top: 0;
-	bottom: 0;
-}
-
+/* Loading screen: --p runs 0..1 with the download. */
 #status {
-	background-color: #242424;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
+	position: absolute;
+	inset: 0;
+	overflow: hidden;
 	visibility: hidden;
+	user-select: none;
+	transition: opacity 0.5s ease;
+	will-change: opacity;
 }
 
-#status-splash {
-	max-height: 100%;
-	max-width: 100%;
-	margin: auto;
-}
-
-#status-splash.show-image--false {
-	display: none;
-}
-
-#status-splash.fullsize--true {
-	height: 100%;
-	width: 100%;
-	object-fit: contain;
-}
-
-#status-splash.use-filter--false {
-	image-rendering: pixelated;
-}
-
-#status-progress, #status-notice {
-	display: none;
-}
-
-#status-progress {
-	bottom: 10%;
-	width: 50%;
-	margin: 0 auto;
+#status.done {
+	opacity: 0;
+	pointer-events: none;
 }
 
 #status-notice {
-	background-color: #5b3943;
-	border-radius: 0.5rem;
-	border: 1px solid #9b3943;
-	color: #e0e0e0;
-	font-family: 'Noto Sans', 'Droid Sans', Arial, sans-serif;
-	line-height: 1.3;
-	margin: 0 2rem;
-	overflow: hidden;
+	display: none;
+	position: absolute;
+	left: 16px;
+	right: 16px;
+	bottom: 8%;
+	max-width: 560px;
+	margin: 0 auto;
 	padding: 1rem;
+	background-color: #5b3943;
+	border: 1px solid #9b3943;
+	border-radius: 0.5rem;
+	color: #e0e0e0;
+	font: 15px/1.4 system-ui, sans-serif;
 	text-align: center;
-	z-index: 1;
+	z-index: 2;
 }
+
+#status {
+	background-color: #000;
+	background-image: linear-gradient(rgba(70, 70, 190, 0.16) 1px, transparent 1px), linear-gradient(90deg, rgba(70, 70, 190, 0.16) 1px, transparent 1px);
+	background-size: 80px 80px;
+	background-position: center center;
+	font-family: 'Chakra Petch', system-ui, sans-serif;
+}
+
+.scene {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.flare {
+	fill: none;
+	stroke: rgba(242, 179, 71, 0.8);
+	stroke-width: 2;
+	vector-effect: non-scaling-stroke;
+	transform-box: fill-box;
+	transform-origin: center;
+	animation: flare 4s ease-out infinite;
+	opacity: 0;
+}
+
+.flare.f2 { animation-delay: 0.25s; }
+.flare.f3 { animation-delay: 0.5s; }
+
+@keyframes flare {
+	0% { transform: scale(0.6); opacity: 0; }
+	4% { opacity: 0.9; }
+	60% { transform: scale(9); opacity: 0; }
+	100% { transform: scale(9); opacity: 0; }
+}
+
+.sun {
+	transform-box: fill-box;
+	transform-origin: center;
+	animation: pulse 4s ease-out infinite;
+}
+
+@keyframes pulse {
+	0% { transform: scale(1.25); }
+	30%, 100% { transform: scale(1); }
+}
+
+.ship {
+	transform-box: fill-box;
+	transform-origin: center;
+	animation: drift 5s ease-in-out infinite alternate;
+}
+
+@keyframes drift {
+	from { transform: translate(-6px, 4px) rotate(36deg); }
+	to { transform: translate(6px, -4px) rotate(52deg); }
+}
+
+.front {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 13vh;
+	padding: 0 16px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+}
+
+.title {
+	font-size: clamp(40px, 10vw, 96px);
+	line-height: 1;
+	letter-spacing: 0.4em;
+	margin-right: -0.4em;
+	color: #f2b347;
+	text-shadow: 0 0 30px rgba(242, 179, 71, 0.35);
+}
+
+.tag {
+	margin-top: 12px;
+	font-size: clamp(14px, 2.2vw, 18px);
+	color: #9a96b8;
+}
+
+.bar {
+	position: relative;
+	width: min(420px, 100%);
+	height: 4px;
+	margin-top: 30px;
+	background: rgba(120, 120, 220, 0.2);
+}
+
+.bar b {
+	position: absolute;
+	inset: 0;
+	width: calc(var(--p) * 100%);
+	background: #f2b347;
+	transition: width 0.2s;
+}
+
+.busy .bar b {
+	width: 30%;
+	animation: sweep 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes sweep {
+	to { transform: translateX(233%); }
+}
+
+#status-caption {
+	margin-top: 12px;
+	font-size: 13px;
+	letter-spacing: 0.25em;
+	color: #6f6c93;
+	text-transform: uppercase;
+}
+
+		</style>
+		<style>
+@font-face { font-family: 'Chakra Petch'; src: url(data:font/woff2;base64,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) format('woff2'); font-display: block; }
 		</style>
 		<link id="-gd-engine-icon" rel="icon" type="image/png" href="index.icon.png" />
 <link rel="apple-touch-icon" href="index.apple-touch-icon.png"/>
@@ -103,37 +196,71 @@ body {
 			Your browser does not support JavaScript.
 		</noscript>
 
-		<div id="status">
-			<img id="status-splash" class="show-image--true fullsize--true use-filter--true" src="index.png" alt="">
-			<progress id="status-progress"></progress>
+		<div id="status" style="--p: 0">
+			<svg class="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid meet">
+				<defs>
+					<radialGradient id="sun"><stop offset="0" stop-color="#fff"/><stop offset="0.13" stop-color="#fff"/><stop offset="0.16" stop-color="#ffe2a0"/><stop offset="0.19" stop-color="#f2b347"/><stop offset="0.23" stop-color="#f2b347" stop-opacity="0.35"/><stop offset="0.45" stop-color="#f2b347" stop-opacity="0.12"/><stop offset="0.7" stop-color="#f2b347" stop-opacity="0"/></radialGradient>
+				</defs>
+				<polygon points="250,232 -900,-200 -900,900 250,428" fill="rgba(60, 60, 170, 0.18)"/>
+				<polygon transform="translate(250 330)" points="91.9,0.0 91.2,20.8 95.1,45.8 76.7,61.2 63.2,79.2 46.7,97.0 23.2,101.7 0.0,94.1 -21.6,94.8 -40.7,84.6 -58.7,73.6 -72.1,57.5 -88.2,42.5 -101.9,23.3 -105.3,0.0 -102.8,-23.5 -86.9,-41.8 -82.9,-66.1 -57.2,-71.8 -46.6,-96.8 -21.5,-94.2 -0.0,-101.9 22.8,-99.9 40.2,-83.4 64.7,-81.2 80.8,-64.5 96.4,-46.4 100.0,-22.8" fill="#0b0a12" stroke="#d99a4a" stroke-width="2.5"/>
+				<text x="250" y="210" fill="#d99a4a" font-size="15" text-anchor="middle" font-family="Chakra Petch, sans-serif">Cinder</text>
+				<circle cx="330" cy="330" r="150" fill="none" stroke="rgba(255, 255, 255, 0.1)" stroke-width="1.5"/>
+				<path class="ship" d="M378 302 L393 338 L378 330 L363 338 Z" fill="#f2b347"/>
+				<circle class="sun" cx="960" cy="300" r="170" fill="url(#sun)"/>
+				<circle class="flare" cx="960" cy="300" r="50"/>
+				<circle class="flare f2" cx="960" cy="300" r="50"/>
+				<circle class="flare f3" cx="960" cy="300" r="50"/>
+			</svg>
+			<div class="front">
+				<div class="title">SKIFF</div>
+				<div class="tag">One ship, a handful of bots and a star that keeps flaring.</div>
+				<div class="bar"><b></b></div>
+				<div id="status-caption">Charging the bank</div>
+			</div>
 			<div id="status-notice"></div>
 		</div>
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":2019632,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":2027872,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
 (function () {
 	const statusOverlay = document.getElementById('status');
-	const statusProgress = document.getElementById('status-progress');
 	const statusNotice = document.getElementById('status-notice');
+	const statusCaption = document.getElementById('status-caption');
 
 	let initializing = true;
 	let statusMode = '';
+
+	function onProgress(fraction) {
+
+	}
+
+	function setProgress(current, total) {
+		if (current > 0 && total > 0) {
+			const f = Math.min(1, current / total);
+			statusOverlay.classList.remove('busy');
+			statusOverlay.style.setProperty('--p', f.toFixed(4));
+			statusCaption.textContent = f >= 1 ? 'Undocking' : 'Charging the bank %'.replace('%', Math.floor(f * 100) + '%');
+			onProgress(f);
+		} else {
+			statusOverlay.classList.add('busy');
+		}
+	}
 
 	function setStatusMode(mode) {
 		if (statusMode === mode || !initializing) {
 			return;
 		}
 		if (mode === 'hidden') {
-			statusOverlay.remove();
+			statusOverlay.classList.add('done');
+			setTimeout(() => statusOverlay.remove(), 600);
 			initializing = false;
 			return;
 		}
 		statusOverlay.style.visibility = 'visible';
-		statusProgress.style.display = mode === 'progress' ? 'block' : 'none';
 		statusNotice.style.display = mode === 'notice' ? 'block' : 'none';
 		statusMode = mode;
 	}
@@ -200,15 +327,7 @@ const engine = new Engine(GODOT_CONFIG);
 	} else {
 		setStatusMode('progress');
 		engine.startGame({
-			'onProgress': function (current, total) {
-				if (current > 0 && total > 0) {
-					statusProgress.value = current;
-					statusProgress.max = total;
-				} else {
-					statusProgress.removeAttribute('value');
-					statusProgress.removeAttribute('max');
-				}
-			},
+			'onProgress': setProgress,
 		}).then(() => {
 			setStatusMode('hidden');
 		}, displayFailureNotice);
