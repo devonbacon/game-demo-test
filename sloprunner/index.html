@@ -267,7 +267,7 @@ body {
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":628156,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":630908,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
@@ -371,9 +371,17 @@ const engine = new Engine(GODOT_CONFIG);
 		}
 	} else {
 		setStatusMode('progress');
-		engine.startGame({
+		// Reloading for a new build (?fresh=): revalidate the game files first, so the browser
+		// can't hand back the old ones from its cache.
+		let warm = Promise.resolve();
+		if (new URLSearchParams(location.search).has('fresh')) {
+			statusCaption.textContent = 'UPDATING...';
+			const files = [GODOT_CONFIG['mainPack'] || 'index.pck', (GODOT_CONFIG['executable'] || 'index') + '.wasm'];
+			warm = Promise.all(files.map((f) => fetch(f, { cache: 'no-cache' }).then((r) => r.arrayBuffer()).catch(() => null)));
+		}
+		warm.then(() => engine.startGame({
 			'onProgress': setProgress,
-		}).then(() => {
+		})).then(() => {
 			setStatusMode('hidden');
 		}, displayFailureNotice);
 	}
